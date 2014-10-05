@@ -14,6 +14,10 @@ Text::ZPL - Encode and decode ZeroMQ Property Language
 An implementation of the `ZeroMQ Property Language`, a simple ASCII
 configuration file format; see [http://rfc.zeromq.org/spec:4](http://rfc.zeromq.org/spec:4) for details.
 
+Exports two functions by default: ["decode\_zpl"](#decode_zpl) and ["encode\_zpl"](#encode_zpl). This
+module uses [Exporter::Tiny](https://metacpan.org/pod/Exporter::Tiny) to export functions, which allows for flexible
+import options; see the [Exporter::Tiny](https://metacpan.org/pod/Exporter::Tiny) documentation for details.
+
 As a simple example, a `ZPL` file as such:
 
     # This is my conf.
@@ -61,7 +65,7 @@ exception is thrown if the data given cannot be represented in `ZPL` (see
 A blessed object can provide a **TO\_ZPL** method that will supply a plain
 `HASH` or `ARRAY` (but see ["CAVEATS"](#caveats)) to the encoder:
 
-    # Shallow-clone our backing hash, for example:
+    # Shallow-clone this object's backing hash, for example:
     sub TO_ZPL {
       my $self = shift;
       +{ %$self }
@@ -85,6 +89,10 @@ deeply-nested structures in an `ARRAY` will throw an exception:
       ],
     });
     #  -> dies
+
+Encoding skips empty lists (`ARRAY` references).
+
+(The spec is unclear on all this; issues welcome via RT or GitHub!)
 
 # AUTHOR
 

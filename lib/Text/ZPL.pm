@@ -1,5 +1,5 @@
 package Text::ZPL;
-$Text::ZPL::VERSION = '0.001002';
+$Text::ZPL::VERSION = '0.001003';
 use strict; use warnings FATAL => 'all';
 
 use Carp;
@@ -30,11 +30,9 @@ sub decode_zpl {
 
   LINE: for my $line (@lines) {
     ++$lineno;
-    # Trim trailing WS + skip blank/comments-only:
     $line =~ s/\s+$//;
     next LINE if length($line) == 0 or $line =~ /^(?:\s+)?#/;
 
-    # Manage indentation-based hierarchy:
     my $cur_indent = 0;
     $cur_indent++ while substr($line, $cur_indent, 1) eq ' ';
     if ($cur_indent % 4) {
@@ -81,9 +79,7 @@ sub decode_zpl {
       $tmpval =~ s/^\s+//;
 
       my $maybe_q = substr $tmpval, 0, 1;
-      undef $maybe_q unless $maybe_q eq q{'} or $maybe_q eq q{"};
-
-      if ( defined $maybe_q 
+      if ( ($maybe_q eq q{'} || $maybe_q eq q{"}) 
         && (my $matching_q_pos = index $tmpval, $maybe_q, 1) > 1 ) {
         # Quoted, consume up to matching and clean up tmpval
         $realval = substr $tmpval, 1, ($matching_q_pos - 1), '';
@@ -95,10 +91,10 @@ sub decode_zpl {
         $realval = substr $tmpval, 0, $maybe_trailing, '';
       }
 
-      $tmpval =~ s/#.*$//; $tmpval =~ s/\s+//;
-      # Should've thrown away usable pieces by now:
+      $tmpval =~ s/#.*$//;
+      $tmpval =~ s/\s+//;
       if (length $tmpval) {
-        confess "Invalid ZPL (line $lineno); garbage at end-of-line '$tmpval'"
+        confess "Invalid ZPL (line $lineno); garbage at end-of-line: '$tmpval'"
       }
 
       if (exists $ref->{$key}) {
@@ -108,13 +104,12 @@ sub decode_zpl {
         } elsif (ref $ref->{$key} eq 'ARRAY') {
           push @{ $ref->{$key} }, $realval
         } else {
-          my $oldval = $ref->{$key};
-          $ref->{$key} = [ $oldval, $realval ]
+          $ref->{$key} = [ $ref->{$key}, $realval ]
         }
-      } else {
-        $ref->{$key} = $realval
+        next LINE
       }
 
+      $ref->{$key} = $realval;
       next LINE
     }
 
@@ -184,7 +179,7 @@ sub _encode {
 
 sub _encode_array {
   my ($key, $ref, $indent) = @_;
-  my $str;
+  my $str = '';
   for my $item (@$ref) {
     confess "ZPL does not support structures of this type in lists: ".ref $item
       if ref $item;
@@ -200,10 +195,10 @@ sub _maybe_quote {
     if index($val, q{"}) > -1
     and index($val, q{'}) == -1;
   return qq{"$val"}
-    # FIXME ? doesn't handle tabs:
-    if index($val, ' ')  > -1
-    or index($val, '#')  > -1
-    or index($val, q{'}) > -1 and index($val, q{"}) == -1;
+    if index($val, '#')  > -1
+    or index($val, '=')  > -1
+    or (index($val, q{'}) > -1 and index($val, q{"}) == -1)
+    or $val =~ /\s/;  # last because slow :\
   $val
 }
 
@@ -226,6 +221,10 @@ Text::ZPL - Encode and decode ZeroMQ Property Language
 
 An implementation of the C<ZeroMQ Property Language>, a simple ASCII
 configuration file format; see L<http://rfc.zeromq.org/spec:4> for details.
+
+Exports two functions by default: L</decode_zpl> and L</encode_zpl>. This
+module uses L<Exporter::Tiny> to export functions, which allows for flexible
+import options; see the L<Exporter::Tiny> documentation for details.
 
 As a simple example, a C<ZPL> file as such:
 
@@ -274,7 +273,7 @@ L</CAVEATS>).
 A blessed object can provide a B<TO_ZPL> method that will supply a plain
 C<HASH> or C<ARRAY> (but see L</CAVEATS>) to the encoder:
 
-  # Shallow-clone our backing hash, for example:
+  # Shallow-clone this object's backing hash, for example:
   sub TO_ZPL {
     my $self = shift;
     +{ %$self }
@@ -298,6 +297,10 @@ deeply-nested structures in an C<ARRAY> will throw an exception:
     ],
   });
   #  -> dies
+
+Encoding skips empty lists (C<ARRAY> references).
+
+(The spec is unclear on all this; issues welcome via RT or GitHub!)
 
 =head1 AUTHOR
 

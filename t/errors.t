@@ -89,4 +89,9 @@ KEYEXISTS
 eval {; decode_zpl($zpl) };
 like $@, qr/existing.property/, 'subsection conflict dies';
 
+# bad syntax (invalid line w/ spaces)
+$zpl = "bad line with spaces\n";
+eval {; decode_zpl($zpl) };
+like $@, qr/syntax/, 'bad line with spaces dies';
+
 done_testing

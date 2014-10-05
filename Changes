@@ -1,5 +1,11 @@
 Revision history for Perl module Text-ZPL
 
+0.001003 2014-10-05
+
+  - Skip empty arrays when encoding
+
+  - Expanded documentation & tests
+
 0.001002 2014-10-05
 
   - Fix handling of empty sections

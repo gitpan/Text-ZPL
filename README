@@ -12,6 +12,11 @@ DESCRIPTION
     configuration file format; see <http://rfc.zeromq.org/spec:4> for
     details.
 
+    Exports two functions by default: "decode_zpl" and "encode_zpl". This
+    module uses Exporter::Tiny to export functions, which allows for
+    flexible import options; see the Exporter::Tiny documentation for
+    details.
+
     As a simple example, a "ZPL" file as such:
 
       # This is my conf.
@@ -56,7 +61,7 @@ DESCRIPTION
     A blessed object can provide a TO_ZPL method that will supply a plain
     "HASH" or "ARRAY" (but see "CAVEATS") to the encoder:
 
-      # Shallow-clone our backing hash, for example:
+      # Shallow-clone this object's backing hash, for example:
       sub TO_ZPL {
         my $self = shift;
         +{ %$self }
@@ -79,6 +84,10 @@ DESCRIPTION
         ],
       });
       #  -> dies
+
+    Encoding skips empty lists ("ARRAY" references).
+
+    (The spec is unclear on all this; issues welcome via RT or GitHub!)
 
 AUTHOR
     Jon Portnoy <avenj@cobaltirc.org>
