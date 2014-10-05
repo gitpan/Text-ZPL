@@ -1,5 +1,5 @@
 package Text::ZPL;
-$Text::ZPL::VERSION = '0.001001';
+$Text::ZPL::VERSION = '0.001002';
 use strict; use warnings FATAL => 'all';
 
 use Carp;
@@ -35,8 +35,19 @@ sub decode_zpl {
     next LINE if length($line) == 0 or $line =~ /^(?:\s+)?#/;
 
     # Manage indentation-based hierarchy:
-    my $cur_indent = __get_indent($lineno, $line);
-    if ($cur_indent > $level) {
+    my $cur_indent = 0;
+    $cur_indent++ while substr($line, $cur_indent, 1) eq ' ';
+    if ($cur_indent % 4) {
+      confess
+         "Invalid ZPL (line $lineno); "
+        ."expected 4-space indent, indent is $cur_indent"
+    }
+
+    if ($cur_indent == 0) {
+      $ref = $root;
+      @descended = ();
+      $level = 0;
+    } elsif ($cur_indent > $level) {
       unless (defined $descended[ ($cur_indent / 4) - 1 ]) {
         confess "Invalid ZPL (line $lineno); no matching parent section",
           " [$line]"
@@ -118,21 +129,12 @@ sub decode_zpl {
       next LINE
     }
 
-    confess "Invalid ZPL (line $lineno); unrecognized syntax: '$line'"
+    confess
+       "Invalid ZPL (line $lineno); "
+      ."unrecognized syntax or bad section name: '$line'"
   } # LINE
 
   $root
-}
-
-sub __get_indent {
-  my ($lineno, $line) = @_;
-  my $pos = 0;
-  $pos++ while substr($line, $pos, 1) eq ' ';
-  if ($pos % 4) {
-    confess
-      "Invalid ZPL (line $lineno); expected 4-space indent, indent is $pos"
-  }
-  $pos
 }
 
 
@@ -143,11 +145,10 @@ sub encode_zpl {
   _encode($obj)
 }
 
-
 sub _encode {
   my ($ref, $indent) = @_;
   $indent ||= 0;
-  my $str;
+  my $str = '';
 
   KEY: for my $key (keys %$ref) {
     confess "$key is not a valid ZPL property name"

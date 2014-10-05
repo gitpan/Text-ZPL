@@ -33,6 +33,8 @@ is_deeply $data,
       },
     },
 
+    emptysection => +{},
+
     other => +{
       list => [
         'foo bar', 'baz quux', 'weeble'
@@ -73,6 +75,8 @@ main                # Section head with trailing comment
         bind = tcp://eth0:5555
     backend
         bind = tcp://eth0:5556
+
+emptysection
 
 other
     list = "foo bar"

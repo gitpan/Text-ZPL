@@ -26,7 +26,7 @@ fo%o
     bar = 1
 BADSECT
 eval {; decode_zpl($zpl) };
-like $@, qr/syntax/, 'bad section name dies';
+like $@, qr/section.name/, 'bad section name dies';
 
 # bad property name
 $zpl = <<'BADPROP';

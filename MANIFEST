@@ -7,6 +7,7 @@ META.yml
 Makefile.PL
 README
 README.mkdn
+bench/vs_json_pp.pl
 dist.ini
 lib/Text/ZPL.pm
 t/00-report-prereqs.dd
