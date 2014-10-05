@@ -1,0 +1,91 @@
+# NAME
+
+Text::ZPL - Encode and decode ZeroMQ Property Language
+
+# SYNOPSIS
+
+    # Decode ZPL to a HASH:
+    my $data = decode_zpl( $zpl_text );
+    # Encode a HASH to ZPL text:
+    my $zpl = encode_zpl( $data );
+
+# DESCRIPTION
+
+An implementation of the `ZeroMQ Property Language`, a simple ASCII
+configuration file format; see [http://rfc.zeromq.org/spec:4](http://rfc.zeromq.org/spec:4) for details.
+
+As a simple example, a `ZPL` file as such:
+
+    # This is my conf.
+    # There are many like it, but this one is mine.
+    confname = "My Config"
+
+    context
+        iothreads = 1
+
+    main
+        publisher
+            bind = tcp://eth0:5550
+            bind = tcp://eth0:5551
+        subscriber
+            connect = tcp://192.168.0.10:5555
+
+... results in a structure like:
+
+    {
+      confname => "My Config",
+      context => { iothreads => '1' },
+      main => {
+        subscriber => {
+          connect => 'tcp://192.168.0.10:5555'
+        },
+        publisher => {
+          bind => [ 'tcp://eth0:5550', 'tcp://eth0:5551' ]
+        }
+      }
+    }
+
+## decode\_zpl
+
+Given a string of `ZPL`-encoded text, returns an appropriate Perl `HASH`; an
+exception is thrown if invalid input is encountered.
+
+## encode\_zpl
+
+Given a Perl `HASH`, returns an appropriate `ZPL`-encoded text string; an
+exception is thrown if the data given cannot be represented in `ZPL` (see
+["CAVEATS"](#caveats)).
+
+### TO\_ZPL
+
+A blessed object can provide a **TO\_ZPL** method that will supply a plain
+`HASH` or `ARRAY` (but see ["CAVEATS"](#caveats)) to the encoder:
+
+    # Shallow-clone our backing hash, for example:
+    sub TO_ZPL {
+      my $self = shift;
+      +{ %$self }
+    }
+
+## CAVEATS
+
+Not all Perl data structures can be represented in ZPL; specifically,
+deeply-nested structures in an `ARRAY` will throw an exception:
+
+    # Simple list is OK:
+    encode_zpl(+{ list => [ 1 .. 3 ] });
+    #  -> list: 1
+    #     list: 2
+    #     list: 3
+    # Deeply nested is not representable:
+    encode_zpl(+{
+      list => [
+        'abc',
+        list2 => [1 .. 3]
+      ],
+    });
+    #  -> dies
+
+# AUTHOR
+
+Jon Portnoy <avenj@cobaltirc.org>
