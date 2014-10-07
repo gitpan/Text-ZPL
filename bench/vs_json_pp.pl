@@ -27,7 +27,7 @@ cmpthese( 5_000, +{
   },
 });
 
-cmpthese( 5_000, +{
+cmpthese( 2_000, +{
   decode_jsonpp => sub {
     decode_json $js
   },

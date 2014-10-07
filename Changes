@@ -1,5 +1,9 @@
 Revision history for Perl module Text-ZPL
 
+0.002001 2014-10-07
+
+  - Add Text::ZPL::Stream decoder
+
 0.001003 2014-10-05
 
   - Skip empty arrays when encoding

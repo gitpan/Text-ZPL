@@ -16,6 +16,7 @@ use Test::NoTabs;
 
 my @files = (
     'lib/Text/ZPL.pm',
+    'lib/Text/ZPL/Stream.pm',
     't/00-report-prereqs.dd',
     't/00-report-prereqs.t',
     't/author-no-tabs.t',
@@ -27,7 +28,8 @@ my @files = (
     't/release-pod-coverage.t',
     't/release-pod-linkcheck.t',
     't/release-pod-syntax.t',
-    't/release-unused-vars.t'
+    't/release-unused-vars.t',
+    't/stream.t'
 );
 
 notabs_ok($_) foreach @files;
