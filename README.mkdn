@@ -54,6 +54,8 @@ As a simple example, a `ZPL` file as such:
 Given a string of `ZPL`-encoded text, returns an appropriate Perl `HASH`; an
 exception is thrown if invalid input is encountered.
 
+(See [Text::ZPL::Stream](https://metacpan.org/pod/Text::ZPL::Stream) for a streaming interface.)
+
 ## encode\_zpl
 
 Given a Perl `HASH`, returns an appropriate `ZPL`-encoded text string; an
@@ -93,6 +95,10 @@ deeply-nested structures in an `ARRAY` will throw an exception:
 Encoding skips empty lists (`ARRAY` references).
 
 (The spec is unclear on all this; issues welcome via RT or GitHub!)
+
+# SEE ALSO
+
+[Text::ZPL::Stream](https://metacpan.org/pod/Text::ZPL::Stream)
 
 # AUTHOR
 

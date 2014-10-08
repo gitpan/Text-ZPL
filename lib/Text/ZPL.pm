@@ -1,5 +1,5 @@
 package Text::ZPL;
-$Text::ZPL::VERSION = '0.002001';
+$Text::ZPL::VERSION = '0.002002';
 use strict; use warnings FATAL => 'all';
 no warnings 'void';
 
@@ -299,6 +299,8 @@ As a simple example, a C<ZPL> file as such:
 Given a string of C<ZPL>-encoded text, returns an appropriate Perl C<HASH>; an
 exception is thrown if invalid input is encountered.
 
+(See L<Text::ZPL::Stream> for a streaming interface.)
+
 =head2 encode_zpl
 
 Given a Perl C<HASH>, returns an appropriate C<ZPL>-encoded text string; an
@@ -338,6 +340,10 @@ deeply-nested structures in an C<ARRAY> will throw an exception:
 Encoding skips empty lists (C<ARRAY> references).
 
 (The spec is unclear on all this; issues welcome via RT or GitHub!)
+
+=head1 SEE ALSO
+
+L<Text::ZPL::Stream>
 
 =head1 AUTHOR
 

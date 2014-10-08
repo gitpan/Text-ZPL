@@ -1,5 +1,5 @@
 package Text::ZPL::Stream;
-$Text::ZPL::Stream::VERSION = '0.002001';
+$Text::ZPL::Stream::VERSION = '0.002002';
 use strict; use warnings FATAL => 'all';
 use Carp;
 

@@ -52,6 +52,8 @@ DESCRIPTION
     Given a string of "ZPL"-encoded text, returns an appropriate Perl
     "HASH"; an exception is thrown if invalid input is encountered.
 
+    (See Text::ZPL::Stream for a streaming interface.)
+
   encode_zpl
     Given a Perl "HASH", returns an appropriate "ZPL"-encoded text string;
     an exception is thrown if the data given cannot be represented in "ZPL"
@@ -88,6 +90,9 @@ DESCRIPTION
     Encoding skips empty lists ("ARRAY" references).
 
     (The spec is unclear on all this; issues welcome via RT or GitHub!)
+
+SEE ALSO
+    Text::ZPL::Stream
 
 AUTHOR
     Jon Portnoy <avenj@cobaltirc.org>

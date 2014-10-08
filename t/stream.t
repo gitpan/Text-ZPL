@@ -59,7 +59,8 @@ my $expected = +{
 # Multi-arg:
 {
   my $stream = Text::ZPL::Stream->new;
-  my $expected_lcount = split "\n", $zpl;
+  my @lines = split "\n", $zpl;
+  my $expected_lcount = @lines;
   # push retval:
   cmp_ok
     $stream->push(map $_."\n", split "\n", $zpl),

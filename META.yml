@@ -19,4 +19,4 @@ requires:
   Exporter::Tiny: 0
 resources:
   repository: git://github.com/avenj/text-zpl.git
-version: 0.002001
+version: 0.002002

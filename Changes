@@ -1,5 +1,9 @@
 Revision history for Perl module Text-ZPL
 
+0.002002 2014-10-08
+
+  - Fix a test case on perl-5.8/5.10
+
 0.002001 2014-10-07
 
   - Add Text::ZPL::Stream decoder
